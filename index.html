@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Verification</title>
+   
+</head>
+<body>
+    <h3 id="h"> click on the identical tiles to verify that you are not a robot.</h3>
+    <div class="image-container" id="imageContainer"></div>
+    <button id="reset" style="display: none;">Reset</button>
+    <button id="verify" style="display: none;">Verify</button>
+    <p id="para" style="display: none;"></p>
+
+    <script>
+        const imageContainer = document.getElementById('imageContainer');
+        const resetButton = document.getElementById('reset');
+        const verifyButton = document.getElementById('verify');
+        const para = document.getElementById('para');
+        const h = document.getElementById('h');
+
+        resetButton.addEventListener('click', reset);
+        verifyButton.addEventListener('click', verify);
+
+        let clicks = 0;
+        // console.log(clicks);
+        let selectedImages = [];
+
+        const images = [
+        "https://picsum.photos/seed/picsum/200/300",
+        "https://picsum.photos/id/237/200/300",
+        "https://picsum.photos/200/300?grayscale",
+        "https://picsum.photos/200/300",
+        "https://picsum.photos/200/300.jpg",
+      ];
+    //   console.log(images);
+
+        function onPageLoad() {
+            random = Math.floor(Math.random() * images.length);
+            // console.log(random);
+            const finalImages = (images.concat(images[random])); 
+            // console.log(finalImages);
+            finalImages.forEach((imageUrl, index) => {
+                const img = document.createElement('img');
+                img.src = imageUrl;
+                img.className = `img${index + 1}`;
+                // console.log(`img${index + 1}`);
+                img.addEventListener('click', handleClick);
+                imageContainer.appendChild(img);
+            });
+            
+        }
+
+
+        function handleClick(event) {
+            const clickedImage = event.target;
+            clicks++
+            // console.log(clicks);
+            // console.log(clickedImage);
+            selectedImages.push(clickedImage)
+            // console.log(selectedImages);
+            if(clicks===1){
+                resetButton.style.display = 'block'  
+            }
+            if(clicks===2){
+                verifyButton.style.display = 'block'  
+            }
+            if(clicks>2){
+                selectedImages.pop()
+                // console.log(selectedImages);
+                para.innerText = "You can select only for two images";
+                para.style.display = 'block'
+                para.style.color = 'red';
+                verifyButton.style.display = 'none';
+                // reset()
+            }
+
+            
+        }
+
+        function verify() {
+            // console.log("verify");
+            const firstImgSrc = selectedImages[0].src;
+            // console.log(firstImgSrc);
+            const secondImgSrc = selectedImages[1].src;
+            // console.log(secondImgSrc);
+            if (firstImgSrc === secondImgSrc) {
+                // console.log('okay');
+                para.innerText = 'You are a human. Congratulations!';
+                para.style.display = 'block'
+                para.style.color = 'green';
+            } else {
+                console.log("not verified");
+                para.innerText = "We can't verify you as a human. You selected the non-identical tiles.";
+                para.style.display = 'block'
+                para.style.color = 'red';
+            }
+            verifyButton.style.display = 'none';
+        }
+
+        function reset() {
+            clicks = 0;
+            // console.log("reset started");
+            // onPageLoad();
+            selectedImages = [];
+            console.log(selectedImages);
+            resetButton.style.display = 'none';
+            verifyButton.style.display = 'none';
+            para.innerText = '';
+        }
+
+        onPageLoad();
+    </script>
+</body>
+</html>
